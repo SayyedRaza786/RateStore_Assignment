@@ -3,8 +3,8 @@ providers = ["node"]
 [phases.build]
 cmds = ["npm install", "npm run build"]
 
-[phases.deploy]
-cmds = ["npx serve -s build -p $PORT"]
+[start]
+cmd = "npx serve -s build --port $PORT"
 
 [variables]
 NODE_ENV = "production"

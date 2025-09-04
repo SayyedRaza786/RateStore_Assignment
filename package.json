@@ -2,7 +2,7 @@
   "name": "store-rating-app",
   "version": "1.0.0",
   "scripts": {
-    "start": "cd backend && npm start",
+    "start": "cd frontend && npx serve -s build --port $PORT",
     "build": "cd frontend && npm install && npm run build",
     "install-all": "cd backend && npm install && cd ../frontend && npm install"
   },
