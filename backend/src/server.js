@@ -40,11 +40,12 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// CORS (expanded to allow dev ports 3000, 3001, 3002)
+// CORS (expanded to allow dev ports 3000, 3001, 3002 and production frontend)
 const allowedOrigins = [
   process.env.FRONTEND_URL || 'http://localhost:3000',
   'http://localhost:3001',
-  'http://localhost:3002'
+  'http://localhost:3002',
+  'https://virtuous-abundance-production.up.railway.app'
 ];
 app.use(cors({
   origin: function(origin, callback) {
