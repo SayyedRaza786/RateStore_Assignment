@@ -1,8 +1,0 @@
-[phases.setup]
-nixPkgs = ['nodejs-18_x']
-
-[phases.install]
-cmd = "cd backend && npm install --only=production"
-
-[start]
-cmd = "cd backend && node src/server.js"

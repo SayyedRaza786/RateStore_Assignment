@@ -1,0 +1,8 @@
+frontend/
+node_modules/
+*.log
+.git/
+README.md
+screenshots/
+start-frontend.*
+Dockerfile.simple
