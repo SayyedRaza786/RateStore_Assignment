@@ -1,9 +1,9 @@
 # Store Rating System
 
 A comprehensive full-stack web application for rating and managing stores, built with Express.js, React.js, and MySQL.
+🚀 **Live Deployed Project Link**: [RateStore] [https://virtuous-abundance-production.up.railway.app/login]
 
 ## Features
-
 ### User Roles & Functionalities
 
 #### System Administrator
