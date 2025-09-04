@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "start": "cd backend && npm start",
-    "install": "cd backend && npm install"
+    "build": "cd frontend && npm install && npm run build",
+    "install-all": "cd backend && npm install && cd ../frontend && npm install"
   },
   "dependencies": {
     "mysql2": "^3.14.4"
