@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FiStar, FiTrendingUp, FiAward, FiActivity, FiSearch, FiMapPin } from 'react-icons/fi';
+import { FiStar, FiTrendingUp, FiAward, FiActivity, FiSearch, FiMapPin, FiX } from 'react-icons/fi';
 import Navbar from '../../components/Navbar';
 import { useAuth } from '../../context/AuthContext';
 import { Card, Button, Input, FormGroup, LoadingSpinner, Container } from '../../styles/GlobalStyles';
 import { toast } from 'react-toastify';
-import { storeAPI, ratingAPI } from '../../services/api';
+import { ratingAPI, userAPI } from '../../services/api';
 
 // Layout styling adapted from AdminDashboard for visual parity
 const DashboardWrapper = styled.div`
@@ -187,8 +187,9 @@ const UserDashboard = () => {
         // Use searchTerm for unified search across name and address
         params = { searchTerm: term.trim() };
       }
-      const res = await storeAPI.getAll(params);
-      setStores(res.data);
+      const res = await userAPI.getStores(params);
+      // Backend returns { stores: [...] }
+      setStores(res.data.stores || []);
     } catch (e) {
       console.error('Failed to fetch stores:', e);
       toast.error('Failed to load stores');
@@ -279,10 +280,28 @@ const UserDashboard = () => {
                 <p>Browse and rate – your feedback shapes the platform.</p>
               </div>
               <StoreSearchBar>
-                <Input placeholder="Search stores by name or location..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                <Input 
+                  placeholder="Search stores by name or location..." 
+                  value={searchTerm} 
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && fetchStores(searchTerm)}
+                />
                 <Button size="sm" onClick={() => fetchStores(searchTerm)} style={{ fontWeight:600 }}>
                   <FiSearch /> Search
                 </Button>
+                {searchTerm && (
+                  <Button 
+                    size="sm" 
+                    variant="secondary" 
+                    onClick={() => {
+                      setSearchTerm('');
+                      fetchStores('');
+                    }} 
+                    style={{ fontWeight:600 }}
+                  >
+                    <FiX /> Clear
+                  </Button>
+                )}
               </StoreSearchBar>
             </StoresHeader>
 

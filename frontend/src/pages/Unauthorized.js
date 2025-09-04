@@ -1,8 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { FiShield, FiArrowLeft, FiHome } from 'react-icons/fi';
+import { useAuth } from '../context/AuthContext';
+import { getDashboardPath } from '../utils/helpers';
 
 import { Button } from '../styles/GlobalStyles';
 
@@ -56,6 +58,25 @@ const ButtonGroup = styled.div`
 `;
 
 const Unauthorized = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleGoToDashboard = () => {
+    if (user?.role) {
+      navigate(getDashboardPath(user.role));
+    } else {
+      navigate('/login');
+    }
+  };
+
+  const handleGoBack = () => {
+    if (user?.role) {
+      navigate(getDashboardPath(user.role));
+    } else {
+      navigate('/login');
+    }
+  };
+
   return (
     <UnauthorizedContainer>
       <motion.div
@@ -76,7 +97,11 @@ const Unauthorized = () => {
           </Message>
 
           <ButtonGroup>
-            <Button as={Link} to="/" variant="primary">
+            <Button 
+              as="button" 
+              variant="primary"
+              onClick={handleGoToDashboard}
+            >
               <FiHome />
               Go to Dashboard
             </Button>
@@ -84,7 +109,7 @@ const Unauthorized = () => {
             <Button 
               as="button" 
               variant="secondary"
-              onClick={() => window.history.back()}
+              onClick={handleGoBack}
             >
               <FiArrowLeft />
               Go Back

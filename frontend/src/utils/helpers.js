@@ -48,6 +48,16 @@ export const getRoleBadgeVariant = (role) => {
   return variantMap[role] || 'info';
 };
 
+// Get dashboard path based on user role
+export const getDashboardPath = (role) => {
+  const dashboardMap = {
+    admin: '/admin',
+    user: '/user',
+    store_owner: '/store-owner'
+  };
+  return dashboardMap[role] || '/user';
+};
+
 // Debounce function for search
 export const debounce = (func, wait) => {
   let timeout;
