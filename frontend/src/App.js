@@ -61,6 +61,10 @@ const AppRoutes = () => {
         path="/dashboard" 
         element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />} 
       />
+      <Route 
+        path="/admin" 
+        element={isAuthenticated && user?.role === 'admin' ? <AdminDashboard /> : <Navigate to="/login" replace />} 
+      />
       <Route
         path="/profile"
         element={isAuthenticated ? <Profile /> : <Navigate to="/login" replace />}

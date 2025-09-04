@@ -197,7 +197,7 @@ const Navbar = () => {
     switch (user.role) {
       case 'admin':
         return [
-          { path: '/dashboard', icon: FiBarChart2, label: 'Dashboard' },
+          { path: '/admin', icon: FiBarChart2, label: 'Dashboard' },
           { path: '/stores', icon: FiShoppingBag, label: 'Stores' },
           { path: '/admin/users', icon: FiUsers, label: 'Users' },
           { path: '/admin/stores', icon: FiShoppingBag, label: 'Manage Stores' },

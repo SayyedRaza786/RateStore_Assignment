@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
 import { loginSchema } from '../utils/validationSchemas';
+import { getDashboardPath } from '../utils/helpers';
 import { Button, Input, FormGroup, Label, ErrorText, Card } from '../styles/GlobalStyles';
 
 // Layout containers & styling
@@ -118,9 +119,10 @@ const Login = () => {
       toast.success('Login successful');
       const from = location.state?.from?.pathname;
       if (from) return navigate(from, { replace: true });
-      // All roles share the unified /dashboard route which renders the correct dashboard based on user.role
-      // Use replace: true to remove login page from history stack
-      navigate('/dashboard', { replace: true });
+      
+      // Navigate to role-specific dashboard
+      const dashboardPath = getDashboardPath(data.user.role);
+      navigate(dashboardPath, { replace: true });
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error('[Login Error]', e.response?.data || e.message);
