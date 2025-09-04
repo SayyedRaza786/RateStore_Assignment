@@ -3,16 +3,16 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Copy backend package files
-COPY backend/package*.json ./backend/
+COPY backend/package*.json ./
 
 # Install backend dependencies
-RUN cd backend && npm ci --only=production
+RUN npm ci --only=production
 
 # Copy backend source
-COPY backend ./backend
+COPY backend ./
 
 # Expose port
-EXPOSE $PORT
+EXPOSE 5001
 
 # Start the backend server
-CMD ["node", "backend/src/server.js"]
+CMD ["node", "src/server.js"]
