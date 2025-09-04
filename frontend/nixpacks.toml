@@ -1,0 +1,10 @@
+providers = ["nodejs"]
+
+[phases.build]
+cmds = ["npm install", "npm run build"]
+
+[phases.deploy]
+cmds = ["npx serve -s build -p $PORT"]
+
+[variables]
+NODE_ENV = "production"

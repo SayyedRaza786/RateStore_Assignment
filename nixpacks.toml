@@ -1,5 +1,0 @@
-{
-  "providers": ["nodejs"],
-  "buildCmd": "cd frontend && npm install && npm run build",
-  "startCmd": "cd frontend && npx serve -s build -p $PORT"
-}
