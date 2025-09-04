@@ -3,7 +3,7 @@
 A comprehensive full-stack web application for rating and managing stores, built with Express.js, React.js, and MySQL.
 
 🚀 **Live Deployed Project**: 
-RateStore :---> [https://virtuous-abundance-production.up.railway.app/login]
+RateStore :---> https://rate-store-assignment.vercel.app/login
 ## 📱 Application Screenshots
 
 ### 🔐 Authentication System
