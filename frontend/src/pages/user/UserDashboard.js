@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FiStar, FiTrendingUp, FiAward, FiActivity, FiSearch, FiMapPin, FiPlus } from 'react-icons/fi';
+import { FiStar, FiTrendingUp, FiAward, FiActivity, FiSearch, FiMapPin } from 'react-icons/fi';
 import Navbar from '../../components/Navbar';
 import { useAuth } from '../../context/AuthContext';
 import { Card, Button, Input, FormGroup, LoadingSpinner, Container } from '../../styles/GlobalStyles';
@@ -180,10 +180,22 @@ const UserDashboard = () => {
   }, [navigate, location.key]);
   useEffect(() => { const id = setTimeout(() => fetchStores(searchTerm), 300); return () => clearTimeout(id); }, [searchTerm]);
 
-  const fetchStores = async (term='') => {
-    try { const params = term ? { name: term, address: term } : undefined; const res = await storeAPI.getAll(params); setStores(res.data); }
-    catch (e) { console.error(e); toast.error('Failed to load stores'); }
-    finally { setLoading(false); }
+  const fetchStores = async (term = '') => {
+    try {
+      let params = {};
+      if (term && term.trim()) {
+        // Use searchTerm for unified search across name and address
+        params = { searchTerm: term.trim() };
+      }
+      const res = await storeAPI.getAll(params);
+      setStores(res.data);
+    } catch (e) {
+      console.error('Failed to fetch stores:', e);
+      toast.error('Failed to load stores');
+      setStores([]);
+    } finally {
+      setLoading(false);
+    }
   };
   const fetchUserStats = async () => { try { const res = await ratingAPI.getUserStats(); setUserStats(res.data); } catch(e){ console.error(e); } };
   const handleRateStore = (store) => { setSelectedStore(store); setRating(store.userRating || 0); setComment(store.userComment || ''); setShowRatingModal(true); };
@@ -269,7 +281,7 @@ const UserDashboard = () => {
               <StoreSearchBar>
                 <Input placeholder="Search stores by name or location..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                 <Button size="sm" onClick={() => fetchStores(searchTerm)} style={{ fontWeight:600 }}>
-                  <FiPlus /> Refresh
+                  <FiSearch /> Search
                 </Button>
               </StoreSearchBar>
             </StoresHeader>

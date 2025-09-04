@@ -62,6 +62,17 @@ export const updatePasswordSchema = yup.object().shape({
     .required('Please confirm your new password'),
 });
 
+export const updateProfileSchema = yup.object().shape({
+  name: yup
+    .string()
+    .min(3, 'Name must be at least 3 characters')
+    .max(60, 'Name must not exceed 60 characters')
+    .required('Name is required'),
+  currentPassword: yup
+    .string()
+    .required('Current password is required for security verification'),
+});
+
 export const storeSchema = yup.object().shape({
   name: yup
     .string()

@@ -4,11 +4,12 @@ import { motion } from 'framer-motion';
 import { FiSearch, FiMapPin, FiFilter } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 
-import Navbar from '../../components/Navbar';
-import StarRating from '../../components/StarRating';
-import { userAPI } from '../../services/api';
-import { Container, Card, Button, Input, FormGroup, Label, LoadingSpinner } from '../../styles/GlobalStyles';
-import { debounce } from '../../utils/helpers';
+import Navbar from '../components/Navbar';
+import StarRating from '../components/StarRating';
+import { useAuth } from '../context/AuthContext';
+import { storeAPI, userAPI } from '../services/api';
+import { Container, Card, Button, Input, FormGroup, Label, LoadingSpinner } from '../styles/GlobalStyles';
+import { debounce } from '../utils/helpers';
 
 const StoresContainer = styled.div`
   min-height: 100vh;
@@ -45,12 +46,13 @@ const SearchFilters = styled(Card)`
 
 const FiltersGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr auto;
+  grid-template-columns: 1fr 1fr auto auto;
   gap: ${({ theme }) => theme.spacing.lg};
   align-items: end;
 
   @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     grid-template-columns: 1fr;
+    gap: ${({ theme }) => theme.spacing.md};
   }
 `;
 
@@ -121,14 +123,50 @@ const EmptyState = styled.div`
   text-align: center;
   padding: ${({ theme }) => theme.spacing.xl};
   color: ${({ theme }) => theme.colors.gray600};
+
+  .icon {
+    font-size: 4rem;
+    margin-bottom: ${({ theme }) => theme.spacing.lg};
+    opacity: 0.5;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    margin-bottom: ${({ theme }) => theme.spacing.sm};
+  }
+
+  p {
+    font-size: 1rem;
+    margin-bottom: ${({ theme }) => theme.spacing.lg};
+  }
 `;
 
-const UserStores = () => {
+const SearchInput = styled(Input)`
+  position: relative;
+  padding-left: 40px;
+`;
+
+const SearchIcon = styled.div`
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: ${({ theme }) => theme.colors.gray500};
+  pointer-events: none;
+`;
+
+const InputWrapper = styled.div`
+  position: relative;
+`;
+
+const Stores = () => {
+  const { user } = useAuth();
   const [stores, setStores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     name: '',
     address: '',
+    searchTerm: '', // Add unified search term
     sortBy: 'name',
     sortOrder: 'ASC'
   });
@@ -137,17 +175,7 @@ const UserStores = () => {
 
   useEffect(() => {
     const initializeFetch = async () => {
-      setLoading(true);
-      try {
-        const response = await userAPI.getStores({});
-        setStores(response.data.stores || response.data || []);
-      } catch (error) {
-        console.error('Failed to fetch stores:', error);
-        toast.error('Failed to fetch stores');
-        setStores([]);
-      } finally {
-        setLoading(false);
-      }
+      await fetchStores();
     };
     initializeFetch();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -155,24 +183,14 @@ const UserStores = () => {
   const fetchStores = async (searchFilters = filters) => {
     setLoading(true);
     try {
-      // Prepare search parameters
-      const queryParams = {};
-      
-      // Add non-empty search parameters
-      if (searchFilters.name && searchFilters.name.trim()) {
-        queryParams.name = searchFilters.name.trim();
-      }
-      if (searchFilters.address && searchFilters.address.trim()) {
-        queryParams.address = searchFilters.address.trim();
-      }
-      if (searchFilters.sortBy) {
-        queryParams.sortBy = searchFilters.sortBy;
-      }
-      if (searchFilters.sortOrder) {
-        queryParams.sortOrder = searchFilters.sortOrder;
+      // Use appropriate API based on user role
+      let response;
+      if (user?.role === 'admin') {
+        response = await storeAPI.getAll(searchFilters);
+      } else {
+        response = await userAPI.getStores(searchFilters);
       }
       
-      const response = await userAPI.getStores(queryParams);
       setStores(response.data.stores || response.data || []);
     } catch (error) {
       console.error('Failed to fetch stores:', error);
@@ -188,7 +206,18 @@ const UserStores = () => {
   }, 500);
 
   const handleFilterChange = (field, value) => {
-    const newFilters = { ...filters, [field]: value };
+    let newFilters = { ...filters, [field]: value };
+    
+    // If using unified search, clear individual search fields
+    if (field === 'searchTerm' && value) {
+      newFilters.name = '';
+      newFilters.address = '';
+    }
+    // If using individual search, clear unified search
+    else if ((field === 'name' || field === 'address') && value) {
+      newFilters.searchTerm = '';
+    }
+    
     setFilters(newFilters);
     debouncedSearch(newFilters);
   };
@@ -225,6 +254,7 @@ const UserStores = () => {
         return rest;
       });
     } catch (error) {
+      console.error('Failed to submit rating:', error);
       toast.error('Failed to submit rating');
     } finally {
       setSubmittingRating(prev => ({ ...prev, [storeId]: false }));
@@ -238,6 +268,17 @@ const UserStores = () => {
     });
   };
 
+  const handleSearch = () => {
+    fetchStores();
+    toast.info('Searching stores...');
+  };
+
+  const clearFilters = () => {
+    const resetFilters = { name: '', address: '', searchTerm: '', sortBy: 'name', sortOrder: 'ASC' };
+    setFilters(resetFilters);
+    fetchStores(resetFilters);
+  };
+
   return (
     <StoresContainer>
       <Navbar />
@@ -248,54 +289,87 @@ const UserStores = () => {
           transition={{ duration: 0.6 }}
         >
           <Header>
-            <Title>Browse Stores</Title>
-            <Subtitle>Discover and rate amazing stores in your area</Subtitle>
+            <Title>All Stores</Title>
+            <Subtitle>Discover and explore stores - search by name or location</Subtitle>
           </Header>
 
           <SearchFilters>
             <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <FiFilter /> Search & Filter Stores
             </h3>
+            
+            {/* Unified Search Bar */}
+            <FormGroup style={{ marginBottom: '1rem' }}>
+              <Label>Quick Search</Label>
+              <InputWrapper>
+                <SearchIcon><FiSearch /></SearchIcon>
+                <SearchInput
+                  type="text"
+                  placeholder="Search stores by name or location..."
+                  value={filters.searchTerm}
+                  onChange={(e) => handleFilterChange('searchTerm', e.target.value)}
+                />
+              </InputWrapper>
+            </FormGroup>
+
             <FiltersGrid>
               <FormGroup style={{ marginBottom: 0 }}>
-                <Label>Search by Name</Label>
-                <Input
-                  type="text"
-                  placeholder="Enter store name..."
-                  value={filters.name}
-                  onChange={(e) => handleFilterChange('name', e.target.value)}
-                />
+                <Label>Search by Store Name</Label>
+                <InputWrapper>
+                  <SearchIcon><FiSearch /></SearchIcon>
+                  <SearchInput
+                    type="text"
+                    placeholder="Enter store name..."
+                    value={filters.name}
+                    onChange={(e) => handleFilterChange('name', e.target.value)}
+                    disabled={!!filters.searchTerm} // Disable when using unified search
+                  />
+                </InputWrapper>
               </FormGroup>
               
               <FormGroup style={{ marginBottom: 0 }}>
-                <Label>Search by Address</Label>
-                <Input
-                  type="text"
-                  placeholder="Enter address..."
-                  value={filters.address}
-                  onChange={(e) => handleFilterChange('address', e.target.value)}
-                />
+                <Label>Search by Location</Label>
+                <InputWrapper>
+                  <SearchIcon><FiMapPin /></SearchIcon>
+                  <SearchInput
+                    type="text"
+                    placeholder="Enter address or location..."
+                    value={filters.address}
+                    onChange={(e) => handleFilterChange('address', e.target.value)}
+                    disabled={!!filters.searchTerm} // Disable when using unified search
+                  />
+                </InputWrapper>
               </FormGroup>
               
               <Button 
                 variant="secondary" 
-                onClick={() => {
-                  setFilters({ name: '', address: '', sortBy: 'name', sortOrder: 'ASC' });
-                  fetchStores({ name: '', address: '', sortBy: 'name', sortOrder: 'ASC' });
-                }}
+                onClick={clearFilters}
+                style={{ height: 'fit-content' }}
               >
                 Clear Filters
+              </Button>
+
+              <Button 
+                onClick={handleSearch}
+                style={{ height: 'fit-content' }}
+              >
+                <FiSearch /> Search
               </Button>
             </FiltersGrid>
           </SearchFilters>
 
           {loading ? (
-            <LoadingSpinner size="60px" />
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem 0' }}>
+              <LoadingSpinner size="60px" />
+            </div>
           ) : stores.length === 0 ? (
             <EmptyState>
-              <FiSearch size={48} style={{ marginBottom: '1rem', opacity: 0.5 }} />
+              <FiSearch className="icon" />
               <h3>No stores found</h3>
-              <p>Try adjusting your search criteria</p>
+              <p>Try adjusting your search criteria or check back later for new stores</p>
+              <Button onClick={handleSearch}>
+                <FiSearch /> Search Stores
+              </Button>
             </EmptyState>
           ) : (
             <StoresGrid>
@@ -316,7 +390,12 @@ const UserStores = () => {
                     <RatingSection>
                       <RatingRow>
                         <RatingLabel>Overall Rating:</RatingLabel>
-                        <StarRating rating={parseFloat(store.average_rating || 0)} />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <StarRating rating={parseFloat(store.average_rating || 0)} />
+                          <span style={{ fontSize: '0.875rem', color: '#666' }}>
+                            ({store.average_rating ? parseFloat(store.average_rating).toFixed(1) : '0.0'})
+                          </span>
+                        </div>
                       </RatingRow>
                       
                       {store.user_rating && (
@@ -327,42 +406,45 @@ const UserStores = () => {
                       )}
                     </RatingSection>
 
-                    <UserRatingSection>
-                      <RatingLabel style={{ display: 'block', marginBottom: '0.5rem' }}>
-                        {store.user_rating ? 'Update Your Rating:' : 'Rate This Store:'}
-                      </RatingLabel>
-                      
-                      <StarRating
-                        rating={ratingStores[store.id] || store.user_rating || 0}
-                        interactive
-                        onRatingChange={(rating) => handleRatingSelect(store.id, rating)}
-                      />
-
-                      <RatingActions>
-                        <Button
-                          size="sm"
-                          onClick={() => submitRating(store.id)}
-                          disabled={submittingRating[store.id] || !ratingStores[store.id]}
-                        >
-                          {submittingRating[store.id] 
-                            ? 'Submitting...' 
-                            : store.user_rating 
-                              ? 'Update Rating' 
-                              : 'Submit Rating'
-                          }
-                        </Button>
+                    {/* Only show rating functionality for users */}
+                    {user?.role === 'user' && (
+                      <UserRatingSection>
+                        <RatingLabel style={{ display: 'block', marginBottom: '0.5rem' }}>
+                          {store.user_rating ? 'Update Your Rating:' : 'Rate This Store:'}
+                        </RatingLabel>
                         
-                        {ratingStores[store.id] && (
+                        <StarRating
+                          rating={ratingStores[store.id] || store.user_rating || 0}
+                          interactive
+                          onRatingChange={(rating) => handleRatingSelect(store.id, rating)}
+                        />
+
+                        <RatingActions>
                           <Button
-                            variant="secondary"
                             size="sm"
-                            onClick={() => clearRating(store.id)}
+                            onClick={() => submitRating(store.id)}
+                            disabled={submittingRating[store.id] || !ratingStores[store.id]}
                           >
-                            Clear
+                            {submittingRating[store.id] 
+                              ? 'Submitting...' 
+                              : store.user_rating 
+                                ? 'Update Rating' 
+                                : 'Submit Rating'
+                            }
                           </Button>
-                        )}
-                      </RatingActions>
-                    </UserRatingSection>
+                          
+                          {ratingStores[store.id] && (
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              onClick={() => clearRating(store.id)}
+                            >
+                              Clear
+                            </Button>
+                          )}
+                        </RatingActions>
+                      </UserRatingSection>
+                    )}
                   </StoreCard>
                 </motion.div>
               ))}
@@ -374,4 +456,4 @@ const UserStores = () => {
   );
 };
 
-export default UserStores;
+export default Stores;

@@ -190,25 +190,29 @@ const Navbar = () => {
 
     const commonItems = [
       { path: '/dashboard', icon: FiHome, label: 'Dashboard' },
+      { path: '/stores', icon: FiShoppingBag, label: 'Stores' },
       { path: '/profile', icon: FiSettings, label: 'Profile' },
     ];
 
     switch (user.role) {
       case 'admin':
         return [
-          { path: '/admin/dashboard', icon: FiBarChart2, label: 'Dashboard' },
+          { path: '/dashboard', icon: FiBarChart2, label: 'Dashboard' },
+          { path: '/stores', icon: FiShoppingBag, label: 'Stores' },
           { path: '/admin/users', icon: FiUsers, label: 'Users' },
-          { path: '/admin/stores', icon: FiShoppingBag, label: 'Stores' },
+          { path: '/admin/stores', icon: FiShoppingBag, label: 'Manage Stores' },
           { path: '/profile', icon: FiSettings, label: 'Profile' },
         ];
       case 'user':
         return [
-          { path: '/user/stores', icon: FiShoppingBag, label: 'Stores' },
+          { path: '/dashboard', icon: FiHome, label: 'Dashboard' },
+          { path: '/stores', icon: FiShoppingBag, label: 'Stores' },
           { path: '/profile', icon: FiSettings, label: 'Profile' },
         ];
       case 'store_owner':
         return [
-          { path: '/store-owner/dashboard', icon: FiBarChart2, label: 'Dashboard' },
+          { path: '/dashboard', icon: FiBarChart2, label: 'Dashboard' },
+          { path: '/stores', icon: FiShoppingBag, label: 'Stores' },
           { path: '/profile', icon: FiSettings, label: 'Profile' },
         ];
       default:

@@ -51,6 +51,7 @@ export const authAPI = {
   login: (credentials) => api.post('/auth/login', credentials),
   register: (userData) => api.post('/auth/register', userData),
   updatePassword: (passwordData) => api.put('/auth/update-password', passwordData),
+  updateProfile: (profileData) => api.put('/auth/update-profile', profileData),
 };
 
 // Store API

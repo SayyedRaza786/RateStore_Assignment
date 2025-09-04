@@ -2,7 +2,7 @@ const { promisePool } = require('../config/database');
 
 const getStores = async (req, res) => {
   try {
-    const { name, address, sortBy = 'name', sortOrder = 'ASC' } = req.query;
+    const { name, address, searchTerm, sortBy = 'name', sortOrder = 'ASC' } = req.query;
     const userId = req.user.id;
     
     let query = `
@@ -17,14 +17,21 @@ const getStores = async (req, res) => {
     const params = [userId];
     const conditions = [];
 
-    // Add filters
-    if (name) {
-      conditions.push('s.name LIKE ?');
-      params.push(`%${name}%`);
-    }
-    if (address) {
-      conditions.push('s.address LIKE ?');
-      params.push(`%${address}%`);
+    // Handle different search scenarios
+    if (searchTerm) {
+      // If searchTerm is provided, search in both name and address with OR
+      conditions.push('(s.name LIKE ? OR s.address LIKE ?)');
+      params.push(`%${searchTerm}%`, `%${searchTerm}%`);
+    } else {
+      // Handle individual field searches
+      if (name) {
+        conditions.push('s.name LIKE ?');
+        params.push(`%${name}%`);
+      }
+      if (address) {
+        conditions.push('s.address LIKE ?');
+        params.push(`%${address}%`);
+      }
     }
 
     if (conditions.length > 0) {

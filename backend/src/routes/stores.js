@@ -6,11 +6,27 @@ const { authenticateToken, authorizeRole, authenticateTokenOptional } = require(
 // Get all stores (with optional filters & user-specific rating/comment if logged in)
 router.get('/', authenticateTokenOptional, async (req, res) => {
   try {
-    const { name, address } = req.query;
+    const { name, address, searchTerm } = req.query;
     const conditions = [];
     const params = [];
-    if (name) { conditions.push('s.name LIKE ?'); params.push(`%${name}%`); }
-    if (address) { conditions.push('s.address LIKE ?'); params.push(`%${address}%`); }
+    
+    // Handle different search scenarios
+    if (searchTerm) {
+      // If searchTerm is provided, search in both name and address with OR
+      conditions.push('(s.name LIKE ? OR s.address LIKE ?)');
+      params.push(`%${searchTerm}%`, `%${searchTerm}%`);
+    } else {
+      // Handle individual field searches
+      if (name) { 
+        conditions.push('s.name LIKE ?'); 
+        params.push(`%${name}%`); 
+      }
+      if (address) { 
+        conditions.push('s.address LIKE ?'); 
+        params.push(`%${address}%`); 
+      }
+    }
+    
     const whereClause = conditions.length ? 'WHERE ' + conditions.join(' AND ') : '';
     const userId = req.user?.id;
     let userFieldsSelect = ', NULL as userRating, NULL as userComment';

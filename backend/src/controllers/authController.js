@@ -177,4 +177,58 @@ const updatePassword = async (req, res) => {
   }
 };
 
-module.exports = { login, register, updatePassword };
+const updateProfile = async (req, res) => {
+  try {
+    const { name, currentPassword } = req.body;
+    const userId = req.user.id;
+
+    // Get current user
+    const [users] = await promisePool.execute(
+      'SELECT password, name FROM users WHERE id = ?',
+      [userId]
+    );
+
+    if (users.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Verify current password for security
+    const isValidPassword = await bcrypt.compare(currentPassword, users[0].password);
+    if (!isValidPassword) {
+      return res.status(400).json({ message: 'Current password is incorrect' });
+    }
+
+    // Update profile information
+    await promisePool.execute(
+      'UPDATE users SET name = ? WHERE id = ?',
+      [name, userId]
+    );
+
+    // Get updated user info
+    const [updatedUsers] = await promisePool.execute(
+      'SELECT id, name, email, address, role, created_at, updated_at FROM users WHERE id = ?',
+      [userId]
+    );
+
+    const updatedUser = updatedUsers[0];
+    const normalizedUser = {
+      id: updatedUser.id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      address: updatedUser.address,
+      role: updatedUser.role,
+      createdAt: updatedUser.created_at,
+      updatedAt: updatedUser.updated_at
+    };
+
+    res.json({ 
+      message: 'Profile updated successfully',
+      user: normalizedUser
+    });
+  } catch (error) {
+    console.error('Profile update error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+module.exports = { login, register, updatePassword, updateProfile };

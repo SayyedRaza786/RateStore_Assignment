@@ -55,6 +55,17 @@ const validatePasswordUpdate = [
   handleValidationErrors
 ];
 
+const validateProfileUpdate = [
+  body('name')
+    .trim()
+    .isLength({ min: 3, max: 60 })
+    .withMessage('Name must be between 3 and 60 characters'),
+  body('currentPassword')
+    .notEmpty()
+    .withMessage('Current password is required for security verification'),
+  handleValidationErrors
+];
+
 const validateStore = [
   body('name')
     .trim()
@@ -82,6 +93,7 @@ module.exports = {
   validateUserRegistration,
   validateLogin,
   validatePasswordUpdate,
+  validateProfileUpdate,
   validateStore,
   validateRating,
   handleValidationErrors

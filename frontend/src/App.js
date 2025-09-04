@@ -8,6 +8,8 @@ import { ThemeToggleProvider } from './context/ThemeToggleContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Profile from './pages/Profile';
+import Stores from './pages/Stores';
 import UserDashboard from './pages/user/UserDashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ManageUsers from './pages/admin/ManageUsers';
@@ -58,6 +60,14 @@ const AppRoutes = () => {
       <Route 
         path="/dashboard" 
         element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />} 
+      />
+      <Route
+        path="/profile"
+        element={isAuthenticated ? <Profile /> : <Navigate to="/login" replace />}
+      />
+      <Route
+        path="/stores"
+        element={isAuthenticated ? <Stores /> : <Navigate to="/login" replace />}
       />
       {/* Admin guard wrapper */}
       <Route
