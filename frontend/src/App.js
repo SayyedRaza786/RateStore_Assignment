@@ -22,14 +22,15 @@ const Dashboard = () => {
   
   if (!user) return <Navigate to="/login" />;
   
+  // Redirect to role-specific dashboard routes
   switch (user.role) {
     case 'admin':
-      return <AdminDashboard />;
+      return <Navigate to="/admin" replace />;
     case 'store_owner':
-      return <StoreOwnerDashboard />;
+      return <Navigate to="/store-owner" replace />;
     case 'user':
     default:
-      return <UserDashboard />;
+      return <Navigate to="/user" replace />;
   }
 };
 
@@ -60,6 +61,14 @@ const AppRoutes = () => {
       <Route 
         path="/dashboard" 
         element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />} 
+      />
+      <Route 
+        path="/user" 
+        element={isAuthenticated && user?.role === 'user' ? <UserDashboard /> : <Navigate to="/login" replace />} 
+      />
+      <Route 
+        path="/store-owner" 
+        element={isAuthenticated && user?.role === 'store_owner' ? <StoreOwnerDashboard /> : <Navigate to="/login" replace />} 
       />
       <Route 
         path="/admin" 

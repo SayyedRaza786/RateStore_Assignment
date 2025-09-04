@@ -205,13 +205,13 @@ const Navbar = () => {
         ];
       case 'user':
         return [
-          { path: '/dashboard', icon: FiHome, label: 'Dashboard' },
+          { path: '/user', icon: FiHome, label: 'Dashboard' },
           { path: '/stores', icon: FiShoppingBag, label: 'Stores' },
           { path: '/profile', icon: FiSettings, label: 'Profile' },
         ];
       case 'store_owner':
         return [
-          { path: '/dashboard', icon: FiBarChart2, label: 'Dashboard' },
+          { path: '/store-owner', icon: FiBarChart2, label: 'Dashboard' },
           { path: '/stores', icon: FiShoppingBag, label: 'Stores' },
           { path: '/profile', icon: FiSettings, label: 'Profile' },
         ];
