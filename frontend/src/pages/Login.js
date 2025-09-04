@@ -99,12 +99,9 @@ const Login = () => {
     admin: { email: 'admin@example.com', password: 'adminpass', label: 'Platform management', icon: <FiShield /> }
   };
 
-  const { register, handleSubmit, formState: { errors }, setValue } = useForm({ resolver: yupResolver(loginSchema) });
+  const { register, handleSubmit, formState: { errors } } = useForm({ resolver: yupResolver(loginSchema) });
 
   const applyQuickCreds = (roleKey) => {
-    const creds = quickCreds[roleKey];
-    setValue('email', creds.email, { shouldValidate: true });
-    setValue('password', creds.password, { shouldValidate: true });
     setActiveRole(roleKey);
     toast.info(`Role set to ${roleKey.replace('_', ' ')}`);
   };
@@ -121,8 +118,9 @@ const Login = () => {
       toast.success('Login successful');
       const from = location.state?.from?.pathname;
       if (from) return navigate(from, { replace: true });
-  // All roles share the unified /dashboard route which renders the correct dashboard based on user.role
-  navigate('/dashboard');
+      // All roles share the unified /dashboard route which renders the correct dashboard based on user.role
+      // Use replace: true to remove login page from history stack
+      navigate('/dashboard', { replace: true });
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error('[Login Error]', e.response?.data || e.message);
@@ -174,12 +172,47 @@ const Login = () => {
             <div style={{ fontSize:'.7rem', letterSpacing:'.4px', color:'rgba(255,255,255,0.65)' }}>Secure role-based access • JWT Auth • Animated UI</div>
           </div>
           <div className="right-pane" style={{ background:'var(--panel-bg,rgba(255,255,255,0.75))', padding:'34px 32px 38px', borderRadius:20 }}>
+            {/* Login Instructions */}
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              style={{
+                background: activeRole ? `linear-gradient(135deg, ${roleAccent[activeRole]}20, ${roleAccent[activeRole]}10)` : 'rgba(67, 56, 202, 0.1)',
+                border: activeRole ? `1px solid ${roleAccent[activeRole]}30` : '1px solid rgba(67, 56, 202, 0.2)',
+                borderRadius: '12px',
+                padding: '16px 20px',
+                marginBottom: '24px',
+                textAlign: 'center'
+              }}
+            >
+              <h3 style={{ 
+                margin: '0 0 8px', 
+                fontSize: '1rem', 
+                fontWeight: 600,
+                color: activeRole ? roleAccent[activeRole] : '#4338ca'
+              }}>
+                {activeRole ? `${activeRole.replace('_', ' ').toUpperCase()} Login` : 'Choose Your Role'}
+              </h3>
+              <p style={{ 
+                margin: 0, 
+                fontSize: '0.875rem', 
+                color: 'rgba(75, 85, 99, 0.8)',
+                lineHeight: 1.4
+              }}>
+                {!activeRole 
+                  ? "👈 Select a role from the left panel to proceed with login."
+                  : `✅ ${activeRole.replace('_', ' ').toUpperCase()} role selected! Enter your credentials to login.`
+                }
+              </p>
+            </motion.div>
+            
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
               <FormGroup>
                 <Label>Email</Label>
                 <InputWrapper>
                   <InputIcon><FiMail /></InputIcon>
-                  <StyledInput type="email" placeholder="you@example.com" $error={!!errors.email} {...register('email')} />
+                  <StyledInput type="email" placeholder="" $error={!!errors.email} {...register('email')} />
                 </InputWrapper>
                 {errors.email && <ErrorText>{errors.email.message}</ErrorText>}
               </FormGroup>
@@ -187,7 +220,7 @@ const Login = () => {
                 <Label>Password</Label>
                 <InputWrapper>
                   <InputIcon><FiLock /></InputIcon>
-                  <StyledInput type={showPassword ? 'text' : 'password'} placeholder="••••••••" $error={!!errors.password} $hasIcon {...register('password')} />
+                  <StyledInput type={showPassword ? 'text' : 'password'} placeholder="" $error={!!errors.password} $hasIcon {...register('password')} />
                   <PasswordToggle type="button" onClick={() => setShowPassword(s => !s)}>{showPassword ? <FiEyeOff /> : <FiEye />}</PasswordToggle>
                 </InputWrapper>
                 {errors.password && <ErrorText>{errors.password.message}</ErrorText>}

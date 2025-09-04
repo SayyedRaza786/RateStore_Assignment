@@ -57,16 +57,16 @@ const AppRoutes = () => {
       />
       <Route 
         path="/dashboard" 
-        element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} 
+        element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />} 
       />
       {/* Admin guard wrapper */}
       <Route
         path="/admin/users"
-        element={isAuthenticated && user?.role === 'admin' ? <ManageUsers /> : <Navigate to="/login" />}
+        element={isAuthenticated && user?.role === 'admin' ? <ManageUsers /> : <Navigate to="/login" replace />}
       />
       <Route
         path="/admin/stores"
-        element={isAuthenticated && user?.role === 'admin' ? <ManageStores /> : <Navigate to="/login" />}
+        element={isAuthenticated && user?.role === 'admin' ? <ManageStores /> : <Navigate to="/login" replace />}
       />
   <Route path="/logout" element={<Logout />} />
       <Route 
