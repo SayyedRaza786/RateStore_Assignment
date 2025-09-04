@@ -1,4 +1,10 @@
 {
+  "name": "store-rating-app",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "cd backend && npm start",
+    "install": "cd backend && npm install"
+  },
   "dependencies": {
     "mysql2": "^3.14.4"
   }

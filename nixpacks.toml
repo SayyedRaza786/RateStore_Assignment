@@ -1,0 +1,5 @@
+{
+  "providers": ["nodejs"],
+  "buildCmd": "cd backend && npm install",
+  "startCmd": "cd backend && npm start"
+}
