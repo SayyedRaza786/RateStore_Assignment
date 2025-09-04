@@ -1,11 +1,13 @@
 {
-  "name": "store-rating-app",
+  "name": "store-rating-backend",
   "version": "1.0.0",
+  "main": "backend/src/server.js",
   "scripts": {
-    "start": "cd backend && node src/server.js"
+    "start": "cd backend && node src/server.js",
+    "install": "cd backend && npm install --production"
   },
   "engines": {
-    "node": "18.x",
-    "npm": "9.x"
-  }
+    "node": "18.x"
+  },
+  "keywords": ["express", "nodejs", "backend", "api"]
 }
