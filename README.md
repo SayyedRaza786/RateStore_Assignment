@@ -1,8 +1,99 @@
-# Store Rating System
+# 🏪 Store Rating System
 
 A comprehensive full-stack web application for rating and managing stores, built with Express.js, React.js, and MySQL.
 
+## 🚀 Live Demo of Deployed Project 
+
+[StoreRate]  : (https://virtuous-abundance-production.up.railway.app/login)
+
+## 📱 Application Screenshots
+
+### 🔐 Authentication System
+![User Registration with Role Selection](screenshots/User-Registration%20(Role_Wise).png)
+*Role-based registration system - Users can register as Normal User, Store Owner, or Admin*
+
+![User Login with Role Selection](screenshots/User_Login%20(Role-Wise).png)
+*Secure login system with role-based authentication*
+
+### 👤 User Dashboard & Experience
+![User Dashboard](screenshots/User_Dashboard.png)
+*User dashboard showing store browsing and rating capabilities*
+
+![User Dashboard - Alternative View](screenshots/User_Dashboard_2.png)
+*Enhanced user interface with comprehensive store listings*
+
+### 👨‍💼 Admin Dashboard & Management
+![Admin Dashboard](screenshots/Admin_Dashboard.png)
+*Admin dashboard with system overview and management tools*
+
+![Admin Dashboard - Detailed View](screenshots/Admin_Dashboard_2.png)
+*Comprehensive admin interface with user and store statistics*
+
+![Admin User Management](screenshots/Manage_Users_Admin.png)
+*Admin user management interface with filtering capabilities*
+
+![Admin User Management - Extended](screenshots/Manage_Users_Admin_2.png)
+*Advanced user management with detailed user information*
+
+### 🏪 Store Owner Dashboard
+![Store Owner Dashboard](screenshots/Store_Owner_Dashboard.png)
+*Store owner dashboard showing store performance and customer ratings*
+
+### 👤 Profile Management System
+![User Profile Management](screenshots/Profile_Tab.png)
+*User profile interface with personal information and statistics*
+
+![User Profile - Enhanced View](screenshots/Profile_Tab_2.png)
+*Comprehensive profile management with rating history*
+
+![Admin Profile Management](screenshots/Admin_Profile.png)
+*Admin profile interface with system administration options*
+
+![Admin Profile - Detailed](screenshots/Admin_Profile_2.png)
+*Enhanced admin profile with complete system access*
+
+![Store Owner Profile](screenshots/Store_Owner_Profile.png)
+*Store owner profile management interface*
+
+![Store Owner Profile - Extended](screenshots/Store_Owner_Profile_2.png)
+*Comprehensive store owner profile with business details*
+
+### 🏪 Store Browsing & Management
+![Stores Interface](screenshots/Stores_Tab.png)
+*Store browsing interface with search and filtering capabilities*
+
+### 🌙 Theme Support
+![Dark Mode Interface](screenshots/Dark_Mode.png)
+*Application supports both light and dark themes for better user experience*
+
 ## Features
+
+
+## ✨ Key Features Showcase
+
+### 🔒 Multi-Role Authentication System
+- **Role-Based Registration**: Users can register as Normal User, Store Owner, or Admin
+- **Secure Login**: JWT-based authentication with role-specific dashboards
+- **Profile Management**: Users can update personal information and change passwords
+- **Session Management**: Secure session handling with token-based authentication
+
+### 🏪 Comprehensive Store Management
+- **Store Browsing**: Advanced store discovery with search and filtering
+- **Rating System**: Interactive 5-star rating system for all stores
+- **Store Owner Tools**: Dedicated dashboard for store owners to manage their business
+- **Admin Oversight**: Complete store management capabilities for administrators
+
+### 👥 Advanced User Management
+- **User Dashboard**: Personalized dashboard for each user type
+- **Admin Controls**: Comprehensive user management and system administration
+- **Profile Statistics**: Detailed user activity and rating history
+- **Role-Based Access**: Different interfaces and capabilities based on user role
+
+### 🎨 Modern User Interface
+- **Responsive Design**: Works seamlessly on all device sizes
+- **Dark/Light Theme**: Toggle between light and dark modes for better user experience
+- **Intuitive Navigation**: Easy-to-use interface with role-specific navigation
+- **Real-time Updates**: Dynamic content updates and interactive elements
 
 ### User Roles & Functionalities
 
@@ -115,66 +206,6 @@ store-rating-system/
 └── README.md
 ```
 
-## Installation & Setup
-
-### Prerequisites
-- Node.js (v14 or higher)
-- MySQL (v8.0 or higher)
-- npm or yarn
-
-### Backend Setup
-
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Create a `.env` file with the following variables:
-   ```env
-   DB_HOST=localhost
-   DB_USER=root
-   DB_PASSWORD=your_mysql_password
-   DB_NAME=store_rating_db
-   JWT_SECRET=your_super_secret_jwt_key
-   JWT_EXPIRES_IN=24h
-   PORT=5000
-   ```
-
-4. Start the server:
-   ```bash
-   npm run dev
-   ```
-
-### Frontend Setup
-
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Start the development server:
-   ```bash
-   npm start
-   ```
-
-### Database Setup
-
-The application will automatically:
-- Create the database if it doesn't exist
-- Create all necessary tables
-- Insert a default admin user:
-  - Email: `admin@storerating.com`
-  - Password: `Admin@123`
 
 ## Database Schema
 
@@ -270,33 +301,31 @@ After setup, you can log in with:
 - Modern, colorful UI
 - Smooth animations and transitions
 
-## Development
+### Default Test Accounts
+For testing purposes, you can create accounts with different roles:
 
-### Running in Development Mode
+**Admin Account:**
+- Role: Administrator
+- Access: Full system management
 
-Backend:
-```bash
-cd backend
-npm run dev
-```
+**Store Owner Account:**
+- Role: Store Owner  
+- Access: Store management and analytics
 
-Frontend:
-```bash
-cd frontend
-npm start
-```
-
+**Normal User Account:**
+- Role: User
+- Access: Store browsing and rating
 
 
-Frontend:
-```bash
-cd frontend
-npm run build
-```
 
-Backend:
-```bash
-cd backend
-npm start
-```
+
+
+## 👨‍💻 Developer
+
+**Sayyed Raza**  
+- GitHub: [@SayyedRaza786](https://github.com/SayyedRaza786)
+- Repository: [RateStore_Assignment](https://github.com/SayyedRaza786/RateStore_Assignment)
+
+---
+
 
