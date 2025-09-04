@@ -2,11 +2,10 @@
   "name": "store-rating-app",
   "version": "1.0.0",
   "scripts": {
-    "start": "cd frontend && npx serve -s build --port $PORT",
-    "build": "cd frontend && npm install && npm run build",
-    "install-all": "cd backend && npm install && cd ../frontend && npm install"
+    "start": "cd backend && node src/server.js"
   },
-  "dependencies": {
-    "mysql2": "^3.14.4"
+  "engines": {
+    "node": "18.x",
+    "npm": "9.x"
   }
 }

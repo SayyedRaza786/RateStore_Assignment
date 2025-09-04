@@ -1,9 +1,8 @@
 [phases.build]
 cmds = [
-    "cd frontend",
-    "npm install", 
-    "npm run build"
+    "cd backend",
+    "npm ci --only=production"
 ]
 
 [start]
-cmd = "cd frontend && npx serve -s build --port $PORT"
+cmd = "cd backend && npm start"
