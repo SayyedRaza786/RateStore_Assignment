@@ -6,27 +6,44 @@ const pool = mysql.createPool({
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'store_rating_db',
+  port: process.env.DB_PORT || 3306,
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
+  acquireTimeout: 60000,
+  timeout: 60000,
+  reconnect: true,
+  ssl: process.env.DB_HOST && process.env.DB_HOST.includes('railway') ? {
+    rejectUnauthorized: false
+  } : false
 });
 
 const promisePool = pool.promise();
 
-// Database initialization
 const initDatabase = async () => {
   try {
-    // Create database if it doesn't exist
-    const connection = mysql.createConnection({
-      host: process.env.DB_HOST || 'localhost',
-      user: process.env.DB_USER || 'root',
-      password: process.env.DB_PASSWORD || ''
-    });
+    // For Railway, skip database creation and directly use the provided database
+    if (process.env.DB_HOST && process.env.DB_HOST.includes('railway')) {
+      console.log('Using Railway database - skipping database creation');
+    } else {
+      // Create database if it doesn't exist (for local development)
+      const connection = mysql.createConnection({
+        host: process.env.DB_HOST || 'localhost',
+        user: process.env.DB_USER || 'root',
+        password: process.env.DB_PASSWORD || '',
+        port: process.env.DB_PORT || 3306,
+        connectTimeout: 60000,
+        acquireTimeout: 60000,
+        ssl: process.env.DB_HOST && process.env.DB_HOST.includes('railway') ? {
+          rejectUnauthorized: false
+        } : false
+      });
 
-    await connection.promise().execute(`CREATE DATABASE IF NOT EXISTS ${process.env.DB_NAME || 'store_rating_db'}`);
-    console.log('Database created or already exists');
-    
-    connection.end();
+      await connection.promise().execute(`CREATE DATABASE IF NOT EXISTS ${process.env.DB_NAME || 'store_rating_db'}`);
+      console.log('Database created or already exists');
+      
+      connection.end();
+    }
 
     // Create tables
     await createTables();
