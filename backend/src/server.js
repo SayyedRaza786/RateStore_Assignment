@@ -47,7 +47,8 @@ const allowedOrigins = [
   'http://localhost:3002',
   'https://virtuous-abundance-production.up.railway.app',
   'https://ratestore-assignment.vercel.app',
-  'https://ratestore-assignment-sayyedraza786.vercel.app'
+  'https://ratestore-assignment-sayyedraza786.vercel.app',
+  'https://rate-store-assignment.vercel.app'
 ];
 app.use(cors({
   origin: function(origin, callback) {
@@ -56,7 +57,7 @@ app.use(cors({
     // Allow all vercel.app domains for flexibility
     if (origin && origin.includes('.vercel.app')) return callback(null, true);
     console.warn('[CORS] Blocked origin:', origin);
-    return callback(new Error('Not allowed by CORS'));
+    return callback(null, true); // Temporarily allow all for debugging
   },
   credentials: true
 }));
